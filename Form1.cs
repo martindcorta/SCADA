@@ -8,8 +8,8 @@ namespace DMAenergia
 {
     public partial class SCADA : Form
     {
-       ModbusClient Gensys = new ModbusClient();
-       ModbusClient PLCM221 = new ModbusClient();
+       ModbusClient Equipo1 = new ModbusClient();
+       ModbusClient Equipo2 = new ModbusClient();
         public static int led = 0;
         int[]EntradaAnalogica;
         int[] EntradaAnalogicaPLC;
@@ -18,12 +18,10 @@ namespace DMAenergia
 
         public SCADA(){
             InitializeComponent();
-            Gensys.IPAddress = "192.168.10.10";//gensys core
-            Gensys.Port = 503;
-            /*Gensys.IPAddress = "192.168.10.11"; //este es el gensys con display
-            Gensys.Port = 505;*/
-            PLCM221.IPAddress = "192.168.10.132";
-            PLCM221.Port = 502;
+            Equipo1.IPAddress = "192.168.10.10";//gensys core
+            Equipo1.Port = 503;
+            Equipo2.IPAddress = "192.168.10.132";
+            Equipo2.Port = 502;
         }
 
         public void Form1_Load(object sender, EventArgs e)
@@ -34,8 +32,8 @@ namespace DMAenergia
         {
             try
             {
-                Gensys.Connect();
-                PLCM221.Connect();
+                Equipo1.Connect();
+                Equipo2.Connect();
             }
             catch (Exception ex)
             {
@@ -52,9 +50,9 @@ namespace DMAenergia
             int MaxId = 5;//idmax = cant puntos "SELECT MAX(id) FROM puntos"
             try
             {
-                EntradaAnalogica = Gensys.ReadHoldingRegisters(29, 15);// puerto es una conecion tcp/ip 
-                EntradaAnalogicaPLC = PLCM221.ReadHoldingRegisters(2, 1);
-                EntradaDigital = PLCM221.ReadHoldingRegisters(200, 10);
+                EntradaAnalogica = Equipo1.ReadHoldingRegisters(29, 15);// puerto es una conecion tcp/ip 
+                EntradaAnalogicaPLC = Equipo2.ReadHoldingRegisters(2, 1);
+                EntradaDigital = Equipo2.ReadHoldingRegisters(200, 10);
                 //PLCM221.WriteSingleCoil(20, false);
                 A1 = EntradaDigital[0];
                 DI2 = EntradaAnalogica[12];//la 9 es la fuenta direccion 400042
@@ -71,7 +69,7 @@ namespace DMAenergia
 
                 // Cargamos valor de variables en la nube para ser leidas por APP Celular
 
-                /*MySqlConnection myConnection = new MySqlConnection("server = 37.59.55.185; Uid = 5mYUngtKBH; pwd = wgAKRICTOk; database = 5mYUngtKBH");
+                MySqlConnection myConnection = new MySqlConnection("server = **.**.**.***; Uid = *****; pwd = ******; database = ******");
                 MySqlCommand myCommand = new MySqlCommand("REPLACE INTO variables(id, nombre, valor) values(1, VOLTAJE,'" + DI2 + "' )");
                 myCommand.Connection = myConnection;
                 myConnection.Open();
@@ -80,7 +78,7 @@ namespace DMAenergia
                 ENCODER.Text = A1.ToString() + "V";
                 VOLTAJE.Text = (DI2/10).ToString() + "V";
                 TEMP.Text = DI3.ToString() + "°C";
-                PRESS.Text = DI4.ToString() + "mBar";*/
+                PRESS.Text = DI4.ToString() + "mBar";
                 
                 // Verificamos que esten dentro de los limites normales, sino generamos alarma
                 for (i = 1; i <= 2; i++)
@@ -101,7 +99,7 @@ namespace DMAenergia
             string puerto = "", direccion = "", tag = "", alarmaHi = "", alarmaLow = "";
             int lectura;
            
-            MySqlConnection myConnection = new MySqlConnection("server = 37.59.55.185; Uid = 5mYUngtKBH; pwd = wgAKRICTOk; database = 5mYUngtKBH");
+            MySqlConnection myConnection = new MySqlConnection("server = **.**.**.***; Uid = *******; pwd = ******; database = ******");
             MySqlCommand myCommand = new MySqlCommand("SELECT * FROM puntos where id='" + id + "' and puerto='" + equipo + "'");
             myCommand.Connection = myConnection;
             myConnection.Open();
@@ -187,26 +185,6 @@ namespace DMAenergia
             Alarmas Al = new Alarmas();
             Al.Show();
             //this.Hide();
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ARRANQUE_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label19_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void button6_Click(object sender, EventArgs e)
