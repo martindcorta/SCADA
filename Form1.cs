@@ -11,7 +11,7 @@ namespace DMAenergia
        ModbusClient Equipo1 = new ModbusClient();
        ModbusClient Equipo2 = new ModbusClient();
         public static int led = 0;
-        int[]EntradaAnalogica;
+        int[] EntradaAnalogica;
         int[] EntradaAnalogicaPLC;
         int[] EntradaDigital;
         int[] aux = new int[50];
